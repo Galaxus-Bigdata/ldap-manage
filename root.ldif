@@ -1,0 +1,5 @@
+dn: dc=my-domain,dc=com
+objectClass: dcObject
+objectClass: organization
+dc: my-domain
+o: my-domain

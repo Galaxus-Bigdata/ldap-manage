@@ -16,43 +16,47 @@ DESCRIPTION
 		- Backup Ldap Server
 		- Restore Ldap Backup
 Usage:
-	ldap-manage.py --build-server <domain>
+	ldap-manage.py --build-server <domain> --password <password>
 	ldap-manage.py (-h | --help) 
 	ldap-manage.py --version 
 
 OPTIONS
 	 --build-server 	It will install ldap server and will add rootdn 
 				Example :- ldap-manage.py --build-server example.com
+
+	 --password		specify password for ldap Manager/admin user
 				
 """
 from __future__ import print_function
 from docopt import docopt
 import os
 import sys
+import ldap
 import platform
+import shutil
 import subprocess
 
 if "centos" in platform.dist():
 	centos = True
 else:	centos = False
 
-def build_ldap_server(domain):
+def install():
 	if centos:
 		import yum
 		yb = yum.YumBase()
-		#yb.conf.cache = 1
 		packages = [ 'openldap-clients','openldap-servers' ]
 		for pkg in packages:
 			if yb.rpmdb.searchNevra(name=pkg):
 				print("{0} package already installed".format(pkg))
+				install = False
 			else:
+				install = True
 				print("Installing {0}".format(pkg))
 				yb.install(name=pkg)
 				yb.resolveDeps()
-		yb.buildTransaction()
-		yb.processTransaction()
-					
-
+		if install:
+			yb.buildTransaction()
+			yb.processTransaction()
 	else:
 		import apt
 		packages = [ 'slapd', 'ldap-utils' ]
@@ -70,11 +74,30 @@ def build_ldap_server(domain):
 					print("Sorry, package installed failed [ {err}]".format
 						(err=str(arg)),file=sys.stderr)
 
+def configure_ldap(domain,password):
+	try:
+		slapd_sample = "/usr/share/openldap-servers/slapd.conf.obsolete"
+		DB_sample = "/usr/share/openldap-servers/DB_CONFIG.example"
+		DB_config = "/var/lib/ldap/DB_CONFIG"
+		slapd_conf = "/etc/openldap/slapd.conf"
+		shutil.copy2(slapd_sample,slapd_conf)
+		shutil.copy2(DB_sample,DB_config)
+		for path,dir,files in os.walk("/var/lib/ldap/"):
+			for file in files:
+				f = ''.join([ path, file ])
+				uid = int(subprocess.Popen([ 'id', '-u', 'ldap'],
+					stdout=subprocess.PIPE).communicate()[0])
+				os.chown(f,uid,uid)	
+	except	Exception,arg:
+		print("Someing issue with coping slapd.conf file",arg)
+	
+	crypt = subprocess.Popen(['slappasswd','-s',password],
+		subprocess.PIPE).communicate()[0]
+	return crypt
+
 
 if __name__ == '__main__':
 	args = docopt(__doc__,version='0.1')
 	if args['--build-server']:
-		build_ldap_server(args['<domain>'])
-	else:
-		print("not install")
-	print(args)
+		install()
+		configure_ldap(args['<domain>'],args['<password>'])
