@@ -27,27 +27,48 @@ OPTIONS
 """
 from __future__ import print_function
 from docopt import docopt
-import subprocess
 import os
 import sys
-import apt
+import platform
+import subprocess
+
+if "centos" in platform.dist():
+	centos = True
+else:	centos = False
 
 def build_ldap_server(domain):
-	packages = [ 'slapd', 'ldap-utils' ]
-	cache = apt.cache.Cache()	
-	cache.update()
-	for pkg in packages:
-		pkg = cache[pkg]
-		if pkg.is_installed:
-			print("{0} already installed".format(pkg))
-		else:
-			pkg.mark_install()
+	if centos:
+		import yum
+		yb = yum.YumBase()
+		#yb.conf.cache = 1
+		packages = [ 'openldap-clients','openldap-servers' ]
+		for pkg in packages:
+			if yb.rpmdb.searchNevra(name=pkg):
+				print("{0} package already installed".format(pkg))
+			else:
+				print("Installing {0}".format(pkg))
+				yb.install(name=pkg)
+				yb.resolveDeps()
+		yb.buildTransaction()
+		yb.processTransaction()
+					
 
-			try:
-				cache.commit()
-			except	Exception,arg:
-				print("Sorry, package installed failed [ {err}]".format(err=str(arg)),
-					file=sys.stderr)
+	else:
+		import apt
+		packages = [ 'slapd', 'ldap-utils' ]
+		cache = apt.cache.Cache()	
+		cache.update()
+		for pkg in packages:
+			pkg = cache[pkg]
+			if pkg.is_installed:
+				print("{0} already installed".format(pkg))
+			else:
+				pkg.mark_install()
+				try:
+					cache.commit()
+				except	Exception,arg:
+					print("Sorry, package installed failed [ {err}]".format
+						(err=str(arg)),file=sys.stderr)
 
 
 if __name__ == '__main__':
