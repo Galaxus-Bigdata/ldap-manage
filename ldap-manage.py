@@ -43,6 +43,7 @@ if "centos" in platform.dist()[0].lower():
 	DB_sample = "/usr/share/openldap-servers/DB_CONFIG.example"
 	DB_config = "/var/lib/ldap/DB_CONFIG"
 	slapd_conf = "/etc/openldap/slapd.conf"
+	slapd_dir = "/etc/openldap/slapd.d"
 	uid = pwd.getpwnam("ldap").pw_uid
 	gid = pwd.getpwnam("ldap").pw_gid
 elif "ubuntu" in platform.dist()[0].lower():
@@ -108,7 +109,6 @@ def configure_ldap(domain,password):
 		
 	crypt = subprocess.Popen(['slappasswd','-s',password],
 		stdout=subprocess.PIPE).communicate()[0]
-	print(type(crypt))
 	f = open(slapd_sample,'r')
 	slapd = open(slapd_conf,'wb')
 	for line in f:
@@ -121,6 +121,27 @@ def configure_ldap(domain,password):
 		slapd.write(l)
 	f.close()
 	slapd.close()
+	old = slapd_dir + "-old"
+	try: 
+		os.rename(slapd_dir,old)
+	except:
+		pass
+	rootldif = "/tmp/root.ldif"
+	rootdn = open(rootldif,"wb")
+	print("""dn: dc={d1},dc={d2}
+objectClass: dcObject
+objectClass: organization
+dc: {d1}
+o: {d1}""".format(d1=dc1,d2=dc2),file=rootdn)
+	rootdn.close()
+	cmd = "slapadd -n 2 -l " + rootldif 
+	try:
+		if dc1 in 
+		os.system(cmd)
+		os.mkdir(slapd_dir)
+		cmd = "slaptest -f " + slapd_conf + " -F " + slapd_dir
+		os.system(cmd)
+	
 	
 
 
