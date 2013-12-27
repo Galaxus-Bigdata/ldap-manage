@@ -107,8 +107,7 @@ def configure_ldap(domain,password):
 		print("Someing issue with coping slapd.conf file",arg)
 		
 	crypt = subprocess.Popen(['slappasswd','-s',password],
-		subprocess.PIPE).communicate()[0]
-	crypt = str(crypt)
+		stdout=subprocess.PIPE).communicate()[0]
 	print(type(crypt))
 	f = open(slapd_sample,'r')
 	slapd = open(slapd_conf,'wb')
