@@ -44,6 +44,7 @@ if "centos" in platform.dist()[0].lower():
 	DB_config = "/var/lib/ldap/DB_CONFIG"
 	slapd_conf = "/etc/openldap/slapd.conf"
 	slapd_dir = "/etc/openldap/slapd.d"
+	slapd_sample = ""
 	uid = pwd.getpwnam("ldap").pw_uid
 	gid = pwd.getpwnam("ldap").pw_gid
 elif "ubuntu" in platform.dist()[0].lower():
@@ -53,6 +54,7 @@ elif "ubuntu" in platform.dist()[0].lower():
 	DB_sample= "/usr/share/doc/slapd/examples/DB_CONFIG"
 	DB_config = "/var/lib/ldap/DB_CONFIG"
 	slapd_conf = "/etc/ldap/slapd.conf"
+	slapd_dir = "/etc/ldap/slapd.d/"
 else:	
 	ostype = "unknow"
 
@@ -94,18 +96,20 @@ def install():
 def configure_ldap(domain,password):
 	dc1,dc2 = domain.split('.')
 	link='https://raw.github.com/rahulinux/ldap-manage/master/slapd.conf.sample'
-	try:
-		slapd_sample = "/tmp/slapd.conf.sample"
-		open(slapd_sample,"wb").write(
-			urllib2.urlopen(link).read())
-		shutil.copy2(slapd_sample,slapd_conf)
-		shutil.copy2(DB_sample,DB_config)
-		for path,dir,files in os.walk("/var/lib/ldap/"):
-			for file in files:
-				f = ''.join([ path, file ])
-				os.chown(f,uid,gid)	
-	except	Exception,arg:
-		print("Someing issue with coping slapd.conf file",arg)
+	if not os.path.isfile(slapd_conf):
+		try:
+			slapd_sample = "/tmp/slapd.conf.sample"
+			open(slapd_sample,"wb").write(
+				urllib2.urlopen(link).read())
+			shutil.copy2(slapd_sample,slapd_conf)
+			shutil.copy2(DB_sample,DB_config)
+			for path,dir,files in os.walk("/var/lib/ldap/"):
+				for file in files:
+					f = ''.join([ path, file ])
+					os.chown(f,uid,gid)	
+		except	Exception,arg:
+			print("Someing issue with coping slapd.conf file",arg)
+	else:	
 		
 	crypt = subprocess.Popen(['slappasswd','-s',password],
 		stdout=subprocess.PIPE).communicate()[0]
@@ -136,11 +140,20 @@ o: {d1}""".format(d1=dc1,d2=dc2),file=rootdn)
 	rootdn.close()
 	cmd = "slapadd -n 2 -l " + rootldif 
 	try:
-		if dc1 in 
-		os.system(cmd)
-		os.mkdir(slapd_dir)
-		cmd = "slaptest -f " + slapd_conf + " -F " + slapd_dir
-		os.system(cmd)
+		dc = "(" + "dc=" + dc1 + ")"
+		dc_info = subprocess.Popen(['slapcat','-a',dc ],stdout=subprocess.PIPE).communicate()[0]
+		if not dc1 in dc_info:
+			os.system(cmd)
+			os.mkdir(slapd_dir)
+			cmd = "slaptest -f " + slapd_conf + " -F " + slapd_dir
+			os.system(cmd)
+		else: 
+			print("Seems ldap db already exists,Please remove and re-run this script")
+			sys.exit(1)
+			
+	except Exception,err:
+		print("Some wrong while building rootdb",file=sys.stderr)
+		sys.exit(1)
 	
 	
 
