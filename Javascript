@@ -1,34 +1,51 @@
+import { toDataFrame } from '@grafana/data';
+
 // Helper method to transform the API response data if needed
 transformResponse(data) {
-  const transformedData = [];
+  const dataFrames = [];
 
-  for (const metric of data.metrics) {
-    const timeSeries = {
-      target: metric.metricname, // Set the metric name as the target
-      datapoints: [],
-    };
+  // Assuming your JSON response has a "metrics" property containing the data
+  const metrics = data.metrics;
 
-    const metrics = metric.metrics;
+  for (const metric of metrics) {
+    const target = metric.metricname; // Set the metric name as the target
 
-    for (const timestamp in metrics) {
-      if (metrics.hasOwnProperty(timestamp)) {
-        const value = metrics[timestamp];
+    // Assuming each metric has a "metrics" property containing the data points
+    const dataPoints = metric.metrics;
 
-        // Convert the timestamp to milliseconds since epoch
-        const epochTimestamp = parseInt(timestamp);
+    const timeSeries = [];
 
-        // Create an array [value, timestamp] for each data point
-        const datapoint = [value, epochTimestamp];
+    for (const timestamp in dataPoints) {
+      const value = dataPoints[timestamp];
 
-        // Add the datapoint to the time series
-        timeSeries.datapoints.push(datapoint);
-      }
+      // Convert the timestamp to milliseconds since epoch
+      const epochTimestamp = parseInt(timestamp);
+
+      // Create an object with "time" and "value" properties
+      const point = {
+        time: epochTimestamp,
+        value: value,
+      };
+
+      // Add the data point to the time series
+      timeSeries.push(point);
     }
 
-    // Add the time series to the transformed data array
-    transformedData.push(timeSeries);
+    // Create a data frame using the time series array
+    const dataFrame = toDataFrame({
+      name: target,
+      fields: [
+        { name: 'time', type: 'time', values: timeSeries.map(point => point.time) },
+        { name: 'value', type: 'number', values: timeSeries.map(point => point.value) },
+      ],
+    });
+
+    // Add the data frame to the array of data frames
+    dataFrames.push(dataFrame);
   }
 
-  // Return the transformed data
-  return transformedData;
+  // Return the array of data frames
+  return dataFrames;
 }
+
+
