@@ -48,4 +48,57 @@ transformResponse(data) {
   return dataFrames;
 }
 
+const jsonData = {
+  "metrics": [
+    {
+      "appid": "datanode",
+      "metadata": {},
+      "metricname": "dfs.datanode.BlocksWritten",
+      "metrics": {
+        "1686103260000": 0.145791245791285,
+        "1686103290000": 0.0,
+        "1686103320000": 0.07508417508361162,
+        "1686103350000": 0.05319865319906967,
+        "1686103380000": 0.17979797979836196,
+        "1686124800000": 1.01010101010102
+      },
+      "starttime": 1686103230000,
+      "timestamp": 0
+    }
+  ]
+};
+
+// Extract the metrics array from the JSON
+const metricsArray = jsonData.metrics;
+
+// Create an array to store the formatted table rows
+const tableRows = [];
+
+// Iterate through the metrics array
+for (const metric of metricsArray) {
+  const appid = metric.appid;
+  const metricname = metric.metricname;
+  const metrics = metric.metrics;
+
+  // Iterate through the metrics object and extract the time and value
+  for (const time in metrics) {
+    if (metrics.hasOwnProperty(time)) {
+      const value = metrics[time];
+
+      // Create a table row array with the extracted values
+      const tableRow = [appid, metricname, time, value];
+
+      // Add the table row to the array
+      tableRows.push(tableRow);
+    }
+  }
+}
+
+// Print the formatted table
+console.log('Appid\tMetricsname\tTime\tValue');
+for (const row of tableRows) {
+  console.log(row.join('\t'));
+}
+
+
 
