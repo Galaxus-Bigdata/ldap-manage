@@ -169,30 +169,31 @@ public class SolrJmxDataCollector {
         for (String updateHandlerString : updateHandlerStrings) {
           logger.debug("UpdateHandler Bean {}",updateHandlerString);
           ObjectName updateHandlerObjectName = new ObjectName(String.format("%s:%s", solrCore, updateHandlerString));
+          String collectionName = String.format("%s_%s_%s",updateHandlerObjectName.getKeyProperty("dom2"),updateHandlerObjectName.getKeyProperty("dom3"),updateHandlerObjectName.getKeyProperty("dom4"));
           if (updateHandlerObjectName.getKeyProperty("name").equals("adds")){
           Long adds = (Long) mbsc.getAttribute(updateHandlerObjectName, "Value");
-          solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.updateHandler.adds", adds.doubleValue(), true, "Long", solrCore));}
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.updateHandler.adds",collectionName), adds.doubleValue(), true, "Long", solrCore));}
           if (updateHandlerObjectName.getKeyProperty("name").equals("deletesById")){
           Long deletesById = (Long) mbsc.getAttribute(updateHandlerObjectName, "Value");
-          solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.updateHandler.deletesById", deletesById.doubleValue(), true, "Long", solrCore));}
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.updateHandler.deletesById",collectionName), deletesById.doubleValue(), true, "Long", solrCore));}
           if (updateHandlerObjectName.getKeyProperty("name").equals("deletesByQuery")){
           Long deletesByQuery = (Long) mbsc.getAttribute(updateHandlerObjectName, "Value");
-          solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.updateHandler.deletesByQuery", deletesByQuery.doubleValue(), true, "Long", solrCore));}
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.updateHandler.deletesByQuery",collectionName), deletesByQuery.doubleValue(), true, "Long", solrCore));}
           if (updateHandlerObjectName.getKeyProperty("name").equals("docsPending")){
           Long docsPending = (Long) mbsc.getAttribute(updateHandlerObjectName, "Value");
-          solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.updateHandler.docsPending", docsPending.doubleValue(), true, "Long", solrCore));}
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.updateHandler.docsPending",collectionName), docsPending.doubleValue(), true, "Long", solrCore));}
           if (updateHandlerObjectName.getKeyProperty("name").equals("errors")){
           Long errors = (Long) mbsc.getAttribute(updateHandlerObjectName, "Value");
-          solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.updateHandler.errors", errors.doubleValue(), true, "Long", solrCore));}
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.updateHandler.errors",collectionName), errors.doubleValue(), true, "Long", solrCore));}
           if (updateHandlerObjectName.getKeyProperty("name").equals("transaction_logs_total_size")){
           Long transactionLogsTotalSize = (Long) mbsc.getAttribute(updateHandlerObjectName, "Value");
             // file in bytes
-            solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.updateHandler.transaction_logs_total_size",
+            solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.updateHandler.transaction_logs_total_size",collectionName),
                     transactionLogsTotalSize.doubleValue(), true, "Long", solrCore));}
           if (updateHandlerObjectName.getKeyProperty("name").equals("transaction_logs_total_number")){
           Long transactionLogsTotalNumber = (Long) mbsc.getAttribute(updateHandlerObjectName, "Value");
             // file in bytes
-          solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.updateHandler.transaction_logs_total_number",
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.updateHandler.transaction_logs_total_number",collectionName),
                     transactionLogsTotalNumber.doubleValue(), true, "Long", solrCore));}
 
           /* TODO: commits, autocommits, soft autocommits */
@@ -203,28 +204,36 @@ public class SolrJmxDataCollector {
         for (String searcherString : searcherStrings) {
 
           ObjectName searcherObjectName = new ObjectName(String.format("%s:%s", solrCore, searcherString));
-
+          String collectionName = String.format("%s_%s_%s",searcherObjectName.getKeyProperty("dom2"),searcherObjectName.getKeyProperty("dom3"),searcherObjectName.getKeyProperty("dom4"));
           logger.debug("Searcher Bean {}", searcherObjectName);
           if (searcherObjectName.getKeyProperty("name").equals("numDocs")) {
             Integer searcherNumDocs = (Integer) mbsc.getAttribute(searcherObjectName, "Value");
-            solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.searcher.numDocs", searcherNumDocs.doubleValue(), true, "Long", solrCore));
+            solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.searcher.numDocs",collectionName), searcherNumDocs.doubleValue(), true, "Long", solrCore));
           }
           if (searcherObjectName.getKeyProperty("name").equals("maxDoc")) {
             Integer searcherMaxDoc = (Integer) mbsc.getAttribute(searcherObjectName, "Value");
-            solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.searcher.maxDoc", searcherMaxDoc.doubleValue(), true, "Long", solrCore));
+            solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.searcher.maxDoc",collectionName), searcherMaxDoc.doubleValue(), true, "Long", solrCore));
           }
           if (searcherObjectName.getKeyProperty("name").equals("deletedDocs")) {
             Integer searcherDeletedDocs = (Integer) mbsc.getAttribute(searcherObjectName, "Value");
-            solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.searcher.deletedDocs", searcherDeletedDocs.doubleValue(), true, "Long", solrCore));
+            solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.searcher.deletedDocs",collectionName), searcherDeletedDocs.doubleValue(), true, "Long", solrCore));
           }
           if (searcherObjectName.getKeyProperty("name").equals("warmupTime")) {
             Long searcherWarmupTime = (Long) mbsc.getAttribute(searcherObjectName, "Value");
-            solrCoreMetricsList.add(new SolrMetricsData("solr.admin.mbeans.searcher.warmupTime", searcherWarmupTime.doubleValue(), true, "Long", solrCore));
+            solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.searcher.warmupTime",collectionName), searcherWarmupTime.doubleValue(), true, "Long", solrCore));
           }
 
 
         }
-
+          String[] indexStrings = formatDomain(solrCore,"INDEX");
+        for (String indexString: indexStrings) {
+          ObjectName indexObjectName = new ObjectName(String.format("%s:%s", solrCore, indexString));
+          String collectionName = String.format("%s_%s_%s",indexObjectName.getKeyProperty("dom2"),indexObjectName.getKeyProperty("dom3"),indexObjectName.getKeyProperty("dom4"));
+          if (indexObjectName.getKeyProperty("name").equals("sizeInBytes")) {
+            Long searcherWarmupTime = (Long) mbsc.getAttribute(indexObjectName, "Value");
+            solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.index.sizeInBytes",collectionName), searcherWarmupTime.doubleValue(), true, "Long", solrCore));
+          }
+        }
 
 
           addFilterClassMetrics(filterCacheClass, "filterCache", solrCore, solrCoreMetricsList, Long.class);
@@ -238,6 +247,8 @@ public class SolrJmxDataCollector {
           addQueryMetrics("query", "QUERY", "/query", solrCore, solrCoreMetricsList);
           addQueryMetrics("get", "QUERY", "/get", solrCore, solrCoreMetricsList);
           addQueryMetrics("luke", "ADMIN", "/admin/luke", solrCore, solrCoreMetricsList);
+          addQueryMetrics("browse", "QUERY", "/browse", solrCore, solrCoreMetricsList);
+          addQueryMetrics("export", "QUERY", "/export", solrCore, solrCoreMetricsList);
 
 
       }
@@ -258,6 +269,31 @@ public class SolrJmxDataCollector {
     return list.toArray(new String[0]);
   }
 
+  private String[] formatDomain(String domain, String targetCategoryPattern) throws IOException, MalformedObjectNameException {
+
+    ObjectName queryPattern = new ObjectName(String.format("%s:*",domain));
+    String targetCorePatter = "core";
+
+
+    Set<ObjectName> mbeans = mbsc.queryNames(queryPattern, null);
+    List<String> list = new ArrayList<>();
+    for (ObjectName mbean:mbeans) {
+      String dom1 = mbean.getKeyProperty("dom1");
+      String dom2 = mbean.getKeyProperty("dom2");
+      String dom3 = mbean.getKeyProperty("dom3");
+      String dom4 = mbean.getKeyProperty("dom4");
+      String category = mbean.getKeyProperty("category");
+      String name = mbean.getKeyProperty("name");
+
+      if (targetCorePatter.equals(dom1) && targetCategoryPattern.equals(category)){
+        String fqdn = String.format("dom1=%s,dom2=%s,dom3=%s,dom4=%s,category=%s,name=%s", dom1,dom2, dom3, dom4,category,name);
+        logger.debug("Format Domain Name {}", fqdn);
+        list.add(fqdn);
+      }
+    }
+    return list.toArray(new String[0]);
+
+  }
   private String[] formatDomain(String domain, String targetCategoryPattern, String targetScopePattern) throws IOException, MalformedObjectNameException {
 
     ObjectName queryPattern = new ObjectName(String.format("%s:*",domain));
@@ -348,6 +384,7 @@ public class SolrJmxDataCollector {
       String filterCacheObjectStrings = formatDomain(solrCore,"CACHE","searcher",type);
          if (filterCacheObjectStrings != null) {
            ObjectName filterCacheObjectName = new ObjectName(String.format("%s:%s", solrCore, filterCacheObjectStrings));
+           String collectionName = String.format("%s_%s_%s",filterCacheObjectName.getKeyProperty("dom2"),filterCacheObjectName.getKeyProperty("dom3"),filterCacheObjectName.getKeyProperty("dom4"));
            Object attributeValue = mbsc.getAttribute(filterCacheObjectName, "Value");
            logger.debug("Add Filter Class Metrics => attributeValue {}", attributeValue);
            HashMap<?, ?> attributesMap = (HashMap<?, ?>) attributeValue;
@@ -357,9 +394,9 @@ public class SolrJmxDataCollector {
            T cacheSize = (T) attributesMap.get("size");
            Long cacheWarmupTime = (Long) attributesMap.get("warmupTime");
 
-           solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.cache.%s.hitratio", type), cacheHitRatio.doubleValue(), true, "Double", solrCore));
-           solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.cache.%s.size", type), cacheSize.doubleValue(), true, "Long", solrCore));
-           solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.cache.%s.warmupTime", type), cacheWarmupTime.doubleValue(), true, "Long", solrCore));
+           solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.cache.%s.hitratio", collectionName,type), cacheHitRatio.doubleValue(), true, "Double", solrCore));
+           solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.cache.%s.size", collectionName,type), cacheSize.doubleValue(), true, "Long", solrCore));
+           solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.cache.%s.warmupTime", collectionName,type), cacheWarmupTime.doubleValue(), true, "Long", solrCore));
          }
       } catch (Exception e) {
       // skip
@@ -392,6 +429,7 @@ public class SolrJmxDataCollector {
       for (String filterCacheObjectString : filterCacheObjectStrings) {
 
         ObjectName queryHandlerObjectName = new ObjectName(String.format("%s:%s", solrCore, filterCacheObjectString));
+        String collectionName = String.format("%s_%s_%s",queryHandlerObjectName.getKeyProperty("dom2"),queryHandlerObjectName.getKeyProperty("dom3"),queryHandlerObjectName.getKeyProperty("dom4"));
         if (queryHandlerObjectName.getKeyProperty("name").equals("requestTimes")) {
           Double avgRequestsPerSec = (Double) mbsc.getAttribute(queryHandlerObjectName, "MeanRate");
           Long requests = (Long) mbsc.getAttribute(queryHandlerObjectName, "Count");
@@ -401,6 +439,9 @@ public class SolrJmxDataCollector {
           Double ninetyEightPercentile = (Double) mbsc.getAttribute(queryHandlerObjectName, "98thPercentile");
           Double ninetyNinePercentile = (Double) mbsc.getAttribute(queryHandlerObjectName, "99thPercentile");
           Double nineHundredNinetyNinePercentile = (Double) mbsc.getAttribute(queryHandlerObjectName, "999thPercentile");
+
+          Double fiveMinRateReqsPerSecond = (Double) mbsc.getAttribute(queryHandlerObjectName, "FiveMinuteRate");
+          Double fifteenMinRateReqsPerSecond = (Double) mbsc.getAttribute(queryHandlerObjectName, "FifteenMinuteRate");
 
           addValueIfNotZero(percentileData, "50thPercentile", fiftyPercentile);
           addValueIfNotZero(percentileData, "75thPercentile", seventyFivePercentile);
@@ -420,10 +461,16 @@ public class SolrJmxDataCollector {
             avgTimePerRequest = (double) totalTime / requests;
 
           }
-          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.queryHandler.%s.avgRequestsPerSec", queryName), avgRequestsPerSec, true, "Double", solrCore));
-          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.queryHandler.%s.requests", queryName), requests.doubleValue(), true, "Long", solrCore));
-          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.queryHandler.%s.medianRequestTime", queryName), medianRequestTime, true, "Double", solrCore));
-          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.queryHandler.%s.avgTimePerRequest", queryName), avgTimePerRequest, true, "Double", solrCore));
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.queryHandler.%s.avgRequestsPerSec", collectionName,queryName), avgRequestsPerSec, true, "Double", solrCore));
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.queryHandler.%s.5minRateReqsPerSecond", collectionName,queryName), fiveMinRateReqsPerSecond, true, "Double", solrCore));
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.queryHandler.%s.15minRateReqsPerSecond", collectionName,queryName), fifteenMinRateReqsPerSecond, true, "Double", solrCore));
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.queryHandler.%s.requests", collectionName,queryName), requests.doubleValue(), true, "Long", solrCore));
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.queryHandler.%s.medianRequestTime", collectionName,queryName), medianRequestTime, true, "Double", solrCore));
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.queryHandler.%s.avgTimePerRequest", collectionName,queryName), avgTimePerRequest, true, "Double", solrCore));
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.queryHandler.%s.75thPcRequestTime", collectionName,queryName), seventyFivePercentile, true, "Double", solrCore));
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.queryHandler.%s.95thPcRequestTime", collectionName,queryName), ninetyFivePercentile, true, "Double", solrCore));
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.queryHandler.%s.99thPcRequestTime", collectionName,queryName), ninetyNinePercentile, true, "Double", solrCore));
+          solrCoreMetricsList.add(new SolrMetricsData(String.format("solr.admin.mbeans.%s.queryHandler.%s.999thPcRequestTime", collectionName,queryName), nineHundredNinetyNinePercentile, true, "Double", solrCore));
         }
 
 

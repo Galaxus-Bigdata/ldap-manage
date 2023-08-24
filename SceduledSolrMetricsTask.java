@@ -82,7 +82,7 @@ public class SceduledSolrMetricsTask {
       long currMs = System.currentTimeMillis();
       if (aggregateCoreMetrics) {
         List<SolrMetricsData> aggregatedCoreMetricData = solrJmxDataCollector.collectAggregatedCoreJmxData();
-        logger.info("Getting Core Metrics {}",aggregatedCoreMetricData.toString());
+        logger.info("Getting Core Metrics");
         TimelineMetrics timelineMetrics = createTimlineMetrics(currMs, aggregatedCoreMetricData, coreAppName);
         solrMetricsSink.emitMetrics(timelineMetrics);
       } else {
