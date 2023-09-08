@@ -1,0 +1,45 @@
+from pyhive import hive
+from thrift.transport import TSocket, TTransport
+from thrift_sasl import TSaslClientTransport
+from thrift.protocol import TBinaryProtocol
+
+# Hive server connection parameters
+hive_host = 'your_hive_server'
+hive_port = 10000
+database = 'your_database'
+
+# Create a TSocket
+socket = TSocket.TSocket(hive_host, hive_port)
+
+# Create a TSaslClientTransport with SASL/Kerberos
+sasl_transport = TSaslClientTransport(
+    socket,
+    'your_kerberos_service_name',
+    username='your_username',
+    mechanism='GSSAPI',
+    thrift_transport=socket,
+)
+
+# Open the transport
+sasl_transport.open()
+
+# Establish a connection
+conn = hive.Connection(
+    host=hive_host,
+    port=hive_port,
+    username='your_username',
+    database=database,
+    thrift_transport=sasl_transport,
+    auth='KERBEROS',
+)
+
+# Create a cursor
+cursor = conn.cursor()
+
+# Execute queries
+cursor.execute('SELECT * FROM your_table')
+result = cursor.fetchall()
+
+# Close the cursor and connection
+cursor.close()
+conn.close()
