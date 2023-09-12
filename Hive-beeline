@@ -1,0 +1,24 @@
+import subprocess
+
+# Define the Hive table name
+table_name = "your_table_name"
+
+# Define the Beeline command
+beeline_command = f"beeline -u jdbc:hive2://your_hive_server:port_number -e 'DESCRIBE FORMATTED {table_name};'"
+
+# Run the Beeline command
+try:
+    result = subprocess.check_output(beeline_command, shell=True, universal_newlines=True)
+    
+    # Split the result into lines
+    lines = result.split('\n')
+
+    # Search for the "Location" field in the output
+    for line in lines:
+        if "Location:" in line:
+            location = line.split(':')[1].strip()
+            print(f"Location of table '{table_name}': {location}")
+            break
+
+except subprocess.CalledProcessError as e:
+    print(f"Error executing Beeline command: {e}")
