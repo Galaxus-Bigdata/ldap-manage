@@ -1,0 +1,16 @@
+Certainly! You can achieve this using various approaches in a shell script. Here's one way using `awk`:
+
+```bash
+#!/bin/bash
+
+input_string="This is a sample text with the specified word in the middle."
+specified_word="specified"
+
+result=$(echo "$input_string" | awk -v word="$specified_word" '{idx=index($0, word); if(idx) print substr($0, 1, idx-1)}')
+
+echo "$result"
+```
+
+Replace the `input_string` and `specified_word` variables with your actual string and the word you want to search for. The script uses `awk` to find the index of the specified word and then extracts the substring before it.
+
+Remember to make the script executable (`chmod +x script.sh`) and execute it (`./script.sh`).
