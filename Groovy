@@ -1,0 +1,12 @@
+import groovyx.net.http.RESTClient
+
+def restClient = new RESTClient('https://api.example.com')
+
+// Configure the underlying HTTP client to ignore SSL certificate validation
+restClient.client.sslSocketFactory = javax.net.ssl.SSLSocketFactory.getDefault()
+restClient.client.hostnameVerifier = javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier()
+
+def response = restClient.get(path: '/endpoint')
+
+println "Response status: ${response.status}"
+println "Response body: ${response.data}"
