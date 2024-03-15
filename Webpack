@@ -1,0 +1,11 @@
+const path = require('path');
+
+module.exports = {
+  mode: 'production',
+  target: 'node',
+  entry: './ambari-metrics-grafana/ambari-metrics/module.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js',
+  },
+};
