@@ -1,0 +1,2 @@
+[security]
+content_security_policy = default-src 'self' http: https:; style-src 'self' 'unsafe-inline' http: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' http: https:; img-src 'self' data: http: https:; font-src 'self' data: http: https:; object-src 'none';
