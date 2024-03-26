@@ -8,13 +8,14 @@ module.exports = {
 
   // Other properties and methods...
 
-  initQuickLinks: function() {
-    // Add Grafana Quick Link using jQuery
-    var $grafanaLink = $('<a>')
-      .attr('href', grafanaDashboardURL)
-      .text('Grafana Dashboard')
-      .addClass('grafana-link');
+  quickLinks: [
+    // Existing quick links...
 
-    $('#quick-links-container').append($grafanaLink);
-  }
+    // Add Grafana Quick Link
+    {
+      label: 'Grafana Dashboard',
+      url: grafanaDashboardURL,
+      icon: 'icon-grafana' // You can add an icon class if needed
+    }
+  ]
 };
