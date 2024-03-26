@@ -1,21 +1,15 @@
-// Define the Grafana URL
-var grafanaDashboardURL = 'https://your-grafana-url.com/dashboard/db/your-dashboard-name';
+// Create a new iframe element
+var iframe = document.createElement('iframe');
 
-// Update the Application Object
-module.exports = {
-  name: 'Ambari Web',
-  rootElement: '#wrapper',
+// Set attributes for the iframe
+iframe.src = 'https://www.example.com';
+iframe.width = '600';
+iframe.height = '400';
+iframe.frameBorder = '0';
+iframe.allowFullscreen = true;
 
-  // Other properties and methods...
+// Get the container element where you want to append the iframe
+var container = document.getElementById('iframeContainer');
 
-  quickLinks: [
-    // Existing quick links...
-
-    // Add Grafana Quick Link
-    {
-      label: 'Grafana Dashboard',
-      url: grafanaDashboardURL,
-      icon: 'icon-grafana' // You can add an icon class if needed
-    }
-  ]
-};
+// Append the iframe to the container
+container.appendChild(iframe);
