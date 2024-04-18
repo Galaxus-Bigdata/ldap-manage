@@ -1,18 +1,28 @@
 import org.apache.solr.core.SolrConfig;
 import org.apache.solr.core.SolrResourceLoader;
-import org.apache.solr.schema.IndexSchema;
-import org.apache.solr.schema.IndexSchemaFactory;
-import org.apache.solr.schema.ManagedIndexSchemaFactory;
-import org.apache.solr.util.SystemIdResolver;
-import org.xml.sax.InputSource;
 
-import java.nio.file.Paths;
+import java.io.File;
 
-SolrResourceLoader loader = new SolrResourceLoader(Paths.get(mySolrHomeDir));
-SolrConfig solrConfig = SolrConfig.readFromResource(loader, "solrconfig.xml");
-InputSource is = new InputSource(loader.openResource("schema.xml"));
-is.setSystemId(SystemIdResolver.createSystemIdFromResourceName("schema.xml"));
-IndexSchemaFactory factory = new ManagedIndexSchemaFactory();
-IndexSchema schema = factory.createFromInputStream(solrConfig, is);
-validateSchema(schema);
-return schema;
+public class SolrConfigReader {
+    public static void main(String[] args) {
+        // Specify the path to your Solr home directory
+        String solrHome = "/path/to/your/solr/home";
+
+        // Initialize SolrResourceLoader
+        SolrResourceLoader loader = new SolrResourceLoader(solrHome);
+
+        // Specify the path to solrconfig.xml
+        String configFile = "solrconfig.xml";
+
+        // Load solrconfig.xml
+        File configFileObj = new File(loader.getConfigDir(), configFile);
+
+        // Read solrconfig.xml
+        SolrConfig solrConfig = new SolrConfig(loader, configFile);
+
+        // Now you can access SolrConfig properties
+        // For example:
+        int maxBooleanClauses = solrConfig.getMaxBooleanClauses();
+        System.out.println("Max Boolean Clauses: " + maxBooleanClauses);
+    }
+}
