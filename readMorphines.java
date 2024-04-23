@@ -5,7 +5,6 @@ import org.kitesdk.morphline.base.Compiler;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class MorphlineExample {
@@ -20,14 +19,14 @@ public class MorphlineExample {
         record.put("yourFieldName", "yourData");
 
         // Process the record
-        Collection<Record> outputRecords = new ArrayList<>();
-        boolean success = morphline.process(record, outputRecords);
-        if (!success) {
-            System.out.println("Failed to process record");
-        } else {
+        try {
+            morphline.process(record);
+            Collection<Record> outputRecords = morphlineContext.getFinalRecords();
             for (Record outputRecord : outputRecords) {
                 System.out.println(outputRecord);
             }
+        } catch (Exception e) {
+            System.out.println("Failed to process record: " + e.getMessage());
         }
     }
 }
