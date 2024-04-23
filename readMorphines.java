@@ -2,11 +2,10 @@ import org.kitesdk.morphline.api.Command;
 import org.kitesdk.morphline.api.MorphlineContext;
 import org.kitesdk.morphline.api.Record;
 import org.kitesdk.morphline.base.Compiler;
-import org.kitesdk.morphline.base.Fields;
-import org.kitesdk.morphline.stdio.AbstractMorphlineTest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class MorphlineExample {
@@ -18,14 +17,14 @@ public class MorphlineExample {
 
         // Prepare a sample record
         Record record = new Record();
-        record.put(Fields.ATTACHMENT_BODY, "your data here");
+        record.put("yourFieldName", "yourData");
 
         // Process the record
-        boolean success = morphline.process(record);
+        Collection<Record> outputRecords = new ArrayList<>();
+        boolean success = morphline.process(record, outputRecords);
         if (!success) {
             System.out.println("Failed to process record");
         } else {
-            Collection<Record> outputRecords = morphlineContext.getFinalRecords();
             for (Record outputRecord : outputRecords) {
                 System.out.println(outputRecord);
             }
