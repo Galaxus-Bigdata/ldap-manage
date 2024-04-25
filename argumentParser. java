@@ -1,1 +1,31 @@
 
+import org.apache.commons.cli.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // Create Options
+        Options options = new Options();
+        options.addOption("i", "input-path", true, "Input path");
+
+        // Create CommandLineParser
+        CommandLineParser parser = new DefaultParser();
+
+        try {
+            // Parse the command line arguments
+            CommandLine cmd = parser.parse(options, args);
+
+            // Retrieve the input path option value
+            String inputPath = cmd.getOptionValue("input-path");
+
+            // Use the input path value
+            if (inputPath != null) {
+                System.out.println("Input path: " + inputPath);
+            } else {
+                System.out.println("Input path not provided.");
+            }
+        } catch (ParseException e) {
+            // Handle parsing exception
+            System.err.println("Error parsing command line arguments: " + e.getMessage());
+        }
+    }
+}
