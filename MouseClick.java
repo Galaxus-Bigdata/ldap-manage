@@ -1,25 +1,41 @@
-import javax.swing.*;
-import java.awt.event.*;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.jnativehook.mouse.NativeMouseEvent;
+import org.jnativehook.mouse.NativeMouseInputListener;
 
-public class MouseWheelButtonPress {
+public class GlobalMouseListenerExample implements NativeMouseInputListener {
+
+    public void nativeMouseClicked(NativeMouseEvent e) {
+        if (e.getButton() == NativeMouseEvent.BUTTON3) { // BUTTON3 is the middle mouse button
+            System.out.println("Mouse wheel button pressed");
+        }
+    }
+
+    public void nativeMousePressed(NativeMouseEvent e) {
+        // Do nothing
+    }
+
+    public void nativeMouseReleased(NativeMouseEvent e) {
+        // Do nothing
+    }
+
+    public void nativeMouseMoved(NativeMouseEvent e) {
+        // Do nothing
+    }
+
+    public void nativeMouseDragged(NativeMouseEvent e) {
+        // Do nothing
+    }
+
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Mouse Wheel Button Press Example");
-        JPanel panel = new JPanel();
+        try {
+            GlobalScreen.registerNativeHook();
+        } catch (NativeHookException ex) {
+            System.err.println("There was a problem registering the native hook.");
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
 
-        // Add a mouse listener to the panel
-        panel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                // Check if the mouse button pressed is the middle button (mouse wheel button)
-                if (SwingUtilities.isMiddleMouseButton(e)) {
-                    System.out.println("Mouse wheel button pressed");
-                }
-            }
-        });
-
-        frame.add(panel);
-        frame.setSize(400, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+        GlobalScreen.addNativeMouseListener(new GlobalMouseListenerExample());
     }
 }
