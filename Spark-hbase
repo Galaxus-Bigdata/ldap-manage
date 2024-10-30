@@ -1,0 +1,47 @@
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.DataFrame
+import org.apache.hadoop.hbase.spark.datasources.HBaseTableCatalog
+
+object SparkHBaseExample {
+
+  def main(args: Array[String]): Unit = {
+    // Create a Spark session with HBase configuration
+    val spark = SparkSession.builder()
+      .appName("Spark HBase Integration")
+      .config("spark.hbase.host", "localhost") // Replace with HBase server host
+      .getOrCreate()
+
+    // Define HBase catalog (schema) for the table
+    val catalog = s"""{
+                     |"table":{"namespace":"default", "name":"your_table_name"},
+                     |"rowkey":"key",
+                     |"columns":{
+                       |"key":{"cf":"rowkey", "col":"key", "type":"string"},
+                       |"col1":{"cf":"cf1", "col":"column1", "type":"string"},
+                       |"col2":{"cf":"cf1", "col":"column2", "type":"string"}
+                     |}
+                     |}""".stripMargin
+
+    // Load data from HBase into a DataFrame
+    val df: DataFrame = spark.read
+      .options(Map(HBaseTableCatalog.tableCatalog -> catalog))
+      .format("org.apache.hadoop.hbase.spark")
+      .load()
+
+    // Show the loaded data
+    df.show()
+
+    // Example transformation or action on DataFrame
+    val transformedDF = df.select("key", "col1", "col2")
+    transformedDF.show()
+
+    // Write data back to HBase (optional)
+    transformedDF.write
+      .options(Map(HBaseTableCatalog.tableCatalog -> catalog))
+      .format("org.apache.hadoop.hbase.spark")
+      .save()
+
+    // Stop the Spark session
+    spark.stop()
+  }
+}
