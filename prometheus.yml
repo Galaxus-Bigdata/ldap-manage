@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s  # How often Prometheus scrapes targets by default.
+
+scrape_configs:
+  - job_name: 'impala'
+    scrape_interval: 10s  # Override the global scrape interval for this job.
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - '<impalad-host>:25000'  # Replace with your Impala daemon's hostname or IP.
+          - '<statestore-host>:25010'  # Add Statestore if needed.
+          - '<catalogd-host>:25020'  # Add Catalogd if needed.
