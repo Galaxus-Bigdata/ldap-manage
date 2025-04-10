@@ -1,0 +1,19 @@
+import javax.crypto.SecretKey;
+import java.io.FileInputStream;
+import java.security.KeyStore;
+import java.util.Base64;
+
+public class ExportSecretKey {
+    public static void main(String[] args) throws Exception {
+        KeyStore keystore = KeyStore.getInstance("JCEKS");
+        keystore.load(new FileInputStream("mykeystore.jceks"), "storepass".toCharArray());
+
+        SecretKey secretKey = (SecretKey) keystore.getKey("myalias", "keypass".toCharArray());
+
+        String encoded = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+
+        System.out.println("-----BEGIN SECRET KEY-----");
+        System.out.println(encoded);
+        System.out.println("-----END SECRET KEY-----");
+    }
+}
